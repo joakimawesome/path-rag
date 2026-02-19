@@ -20,6 +20,14 @@ MIN_NUCLEI_THRESHOLD = 5
 GRID_DIVISIONS = 4
 
 
+def is_critical_exception(error: Exception) -> bool:
+    if isinstance(error, MemoryError):
+        return True
+    if isinstance(error, RuntimeError):
+        return "out of memory" in str(error).lower()
+    return False
+
+
 def get_wsi_files(input_dir: Path, file_list: str | None) -> list[Path]:
     if file_list:
         files = []
@@ -119,6 +127,9 @@ def main() -> None:
         except Exception as error:
             print(f"ERROR processing {wsi_path} ({type(error).__name__}): {error}")
             traceback.print_exc()
+            if is_critical_exception(error):
+                print("Critical error detected. Failing fast.")
+                raise
 
 
 if __name__ == "__main__":
