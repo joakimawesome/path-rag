@@ -28,11 +28,11 @@ def get_wsi_files(input_dir: Path, file_list: str | None) -> list[Path]:
                 path = Path(line.strip())
                 if not line.strip():
                     continue
-                if path.suffix.lower() != ".svs":
-                    print(f"Skipping non-SVS entry in file list: {path}")
-                    continue
                 if not path.exists():
                     print(f"Skipping missing file in file list: {path}")
+                    continue
+                if path.suffix.lower() != ".svs":
+                    print(f"Skipping non-SVS entry in file list: {path}")
                     continue
                 files.append(path)
         return files
@@ -107,6 +107,7 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     temp_dir = Path(args.temp_dir)
     temp_dir.mkdir(parents=True, exist_ok=True)
+    # Respect caller-provided temp location for libraries that rely on TMPDIR.
     os.environ["TMPDIR"] = str(temp_dir)
 
     wsi_files = get_wsi_files(input_dir, args.file_list)
