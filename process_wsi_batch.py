@@ -13,6 +13,11 @@ except ImportError as error:
 
 from histocartography.preprocessing import NucleiExtractor
 
+TOP_PATCH_COUNT = 6
+OVERLAP_PERCENT = 20
+MIN_NUCLEI_THRESHOLD = 5
+GRID_DIVISIONS = 4
+
 
 def get_wsi_files(input_dir: Path, file_list: str | None) -> list[Path]:
     if file_list:
@@ -21,23 +26,22 @@ def get_wsi_files(input_dir: Path, file_list: str | None) -> list[Path]:
     return sorted(input_dir.glob("*.svs"))
 
 
-def extract_top_nuclei_patches(wsi_path: Path, output_dir: Path, patch_count: int = 6) -> None:
+def extract_top_nuclei_patches(wsi_path: Path, output_dir: Path, patch_count: int = TOP_PATCH_COUNT) -> None:
     slide = openslide.OpenSlide(str(wsi_path))
     thumbnail = slide.get_thumbnail((4096, 4096)).convert("RGB")
     image = np.array(thumbnail)
 
     nuclei_map, nuclei_centers = NucleiExtractor().process(image)
-    if nuclei_centers.shape[0] <= 5:
+    if nuclei_centers.shape[0] <= MIN_NUCLEI_THRESHOLD:
         print(f"Skipping {wsi_path.name}: insufficient nuclei ({nuclei_centers.shape[0]})")
         return
 
     width, height = thumbnail.size
-    width_range = np.linspace(0, width, 4, dtype=int)
-    height_range = np.linspace(0, height, 4, dtype=int)
+    width_range = np.linspace(0, width, GRID_DIVISIONS, dtype=int)
+    height_range = np.linspace(0, height, GRID_DIVISIONS, dtype=int)
 
-    overlap_percent = 20
-    width_overlap = int((overlap_percent / 100) * width)
-    height_overlap = int((overlap_percent / 100) * height)
+    width_overlap = int((OVERLAP_PERCENT / 100) * width)
+    height_overlap = int((OVERLAP_PERCENT / 100) * height)
 
     patch_boxes = []
     patch_counts = []
@@ -67,6 +71,7 @@ def extract_top_nuclei_patches(wsi_path: Path, output_dir: Path, patch_count: in
     for patch_index in range(min(patch_count, len(patch_boxes))):
         box = patch_boxes[sorted_indices[patch_index]]
         patch = thumbnail.crop(box)
+        # Keep 1-based names to match existing patch naming in this repository.
         patch.save(slide_output_dir / f"{patch_index + 1}.png")
 
     np.savez_compressed(slide_output_dir / "nuclei_summary.npz", nuclei_count=nuclei_centers.shape[0], nuclei_map=nuclei_map)

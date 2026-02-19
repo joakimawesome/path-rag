@@ -16,5 +16,4 @@ ls -lt logs/*.out 2>/dev/null | head -5 || true
 
 echo
 echo "=== Output Files ==="
-find "$SCRATCH/wsi_output" -name "*.npz" 2>/dev/null | wc -l
-echo "nuclei result files found"
+echo "$(find "$SCRATCH/wsi_output" -name "*.npz" 2>/dev/null | wc -l) nuclei result files found"

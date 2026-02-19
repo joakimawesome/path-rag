@@ -40,7 +40,7 @@ done
 python3 "$TACC_PYLAUNCHER_DIR/pylauncher.py" commands.txt
 
 mkdir -p "$OUTPUT_DIR/final"
-find "$OUTPUT_DIR" -mindepth 2 -maxdepth 2 -type d -name "*" -exec cp -r {} "$OUTPUT_DIR/final"/ \;
+find "$OUTPUT_DIR"/batch_* -mindepth 1 -maxdepth 1 -type d -exec cp -r {} "$OUTPUT_DIR/final"/ \;
 cp -r "$OUTPUT_DIR/final"/* "$RESULT_DIR"/
 
 echo "Parallel processing complete"
