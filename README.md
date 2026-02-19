@@ -110,6 +110,22 @@ sbatch run_nuclei_parallel.slurm
   - processed output: `$SCRATCH/Pediatric-Brain-Tumor/data/wsi_processed/...`
 - Use `watch -n 30 ./monitor_jobs.sh` to monitor jobs and output counts
 
+### Optional: local Windows smoke test (single `.svs`, NVIDIA RTX 4070 Ti)
+
+Run the PowerShell smoke test to process only the first `.svs` file, analogous to `run_nuclei_smoke.slurm`:
+
+```PowerShell
+# Optional overrides:
+# $env:PATHRAG_INPUT_DIR="C:\path-rag-data\wsi_raw"
+# $env:PATHRAG_OUTPUT_ROOT="C:\path-rag-data\wsi_processed"
+# $env:PATHRAG_PYTHON="python"
+powershell -ExecutionPolicy Bypass -File .\run_nuclei_smoke_windows.ps1
+```
+
+Then open `visualize_nuclei_smoke_output.ipynb`, set `SMOKE_OUTPUT_DIR` to the generated smoke output folder, and run all cells to export:
+- `figures/nuclei_top_patches.png`
+- `figures/nuclei_density_map.png`
+
 ### 10. Generate the files for query to be asked for LLaVA-Med for both the images and patches
 
 ```Shell
