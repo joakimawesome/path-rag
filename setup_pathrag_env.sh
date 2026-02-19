@@ -19,10 +19,10 @@ conda create -n path-rag python=3.10 -y
 source activate path-rag
 
 pip install --upgrade pip
-pip install numpy pandas scikit-learn
-pip install opencv-python pillow
-pip install openslide-python
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+pip install numpy==1.26.4 pandas==2.2.3 scikit-learn==1.5.2
+pip install opencv-python==4.10.0.84 pillow==11.1.0
+pip install openslide-python==1.4.1
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
 
 cd "$SCRATCH"
 if [ ! -d histocartography ]; then

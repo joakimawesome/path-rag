@@ -6,13 +6,14 @@
 #SBATCH -t 48:00:00
 #SBATCH -o logs/nuclei_%j.out
 #SBATCH -e logs/nuclei_%j.err
-#SBATCH -A YOUR_PROJECT_ID
+#SBATCH -A ASC25123
 
 set -euo pipefail
 
-INPUT_DIR="$WORK/wsi_input"
-OUTPUT_DIR="$SCRATCH/wsi_output"
-RESULT_DIR="$WORK/nuclei_results"
+DATA_ROOT="$SCRATCH/Pediatric-Brain-Tumor/data"
+INPUT_DIR="$DATA_ROOT/wsi_raw"
+OUTPUT_DIR="$DATA_ROOT/wsi_processed/nuclei_batches/${SLURM_JOB_ID}"
+RESULT_DIR="$DATA_ROOT/wsi_processed/nuclei_results"
 TEMP_DIR="/tmp/nuclei_extract_${SLURM_JOB_ID}"
 
 mkdir -p "$OUTPUT_DIR" "$RESULT_DIR" "$TEMP_DIR" logs

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import traceback
 from pathlib import Path
 
 import numpy as np
@@ -21,14 +22,29 @@ GRID_DIVISIONS = 4
 
 def get_wsi_files(input_dir: Path, file_list: str | None) -> list[Path]:
     if file_list:
+        files = []
         with open(file_list, "r", encoding="utf-8") as file:
-            return [Path(line.strip()) for line in file if line.strip()]
+            for line in file:
+                path = Path(line.strip())
+                if not line.strip():
+                    continue
+                if path.suffix.lower() != ".svs":
+                    print(f"Skipping non-SVS entry in file list: {path}")
+                    continue
+                if not path.exists():
+                    print(f"Skipping missing file in file list: {path}")
+                    continue
+                files.append(path)
+        return files
     return sorted(input_dir.glob("*.svs"))
 
 
 def extract_top_nuclei_patches(wsi_path: Path, output_dir: Path, patch_count: int = TOP_PATCH_COUNT) -> None:
     slide = openslide.OpenSlide(str(wsi_path))
-    thumbnail = slide.get_thumbnail((4096, 4096)).convert("RGB")
+    try:
+        thumbnail = slide.get_thumbnail((4096, 4096)).convert("RGB")
+    finally:
+        slide.close()
     image = np.array(thumbnail)
 
     nuclei_map, nuclei_centers = NucleiExtractor().process(image)
@@ -82,13 +98,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Process WSI files for nuclei extraction")
     parser.add_argument("--input_dir", required=True, help="Directory containing .svs files")
     parser.add_argument("--output_dir", required=True, help="Directory for outputs")
-    parser.add_argument("--temp_dir", default="/tmp", help="Temporary directory (reserved for future use)")
+    parser.add_argument("--temp_dir", default="/tmp", help="Temporary directory")
     parser.add_argument("--file_list", help="Optional file with list of WSIs to process")
     args = parser.parse_args()
 
     input_dir = Path(args.input_dir)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    temp_dir = Path(args.temp_dir)
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    os.environ["TMPDIR"] = str(temp_dir)
 
     wsi_files = get_wsi_files(input_dir, args.file_list)
     print(f"Found {len(wsi_files)} WSI files")
@@ -97,7 +116,8 @@ def main() -> None:
         try:
             extract_top_nuclei_patches(wsi_path, output_dir)
         except Exception as error:
-            print(f"ERROR processing {wsi_path}: {error}")
+            print(f"ERROR processing {wsi_path} ({type(error).__name__}): {error}")
+            traceback.print_exc()
 
 
 if __name__ == "__main__":
