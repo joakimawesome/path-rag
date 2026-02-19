@@ -92,6 +92,24 @@ cd ..
 python generate_histo_patches.py
 ```
 
+### Optional: TACC Vista nuclei extraction for `.svs` whole-slide images
+
+For TACC Vista runs, the repository now includes Slurm-ready scripts for environment setup and nuclei patch extraction:
+
+```Shell
+setup_job=$(sbatch --parsable setup_pathrag_env.sh)
+sbatch --dependency=afterok:${setup_job} test_pipeline.sh
+sbatch run_nuclei_smoke.slurm
+sbatch run_nuclei_extraction.slurm
+# Or multi-node:
+sbatch run_nuclei_parallel.slurm
+```
+
+- Default data layout:
+  - input `.svs`: `$SCRATCH/Pediatric-Brain-Tumor/data/wsi_raw`
+  - processed output: `$SCRATCH/Pediatric-Brain-Tumor/data/wsi_processed/...`
+- Use `watch -n 30 ./monitor_jobs.sh` to monitor jobs and output counts
+
 ### 10. Generate the files for query to be asked for LLaVA-Med for both the images and patches
 
 ```Shell

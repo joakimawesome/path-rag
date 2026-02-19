@@ -4,3 +4,4 @@ histo_image_patch/*
 nohup.out
 arch/*
 histocartography/*
+__pycache__/
