@@ -101,6 +101,7 @@ setup_job=$(sbatch --parsable setup_pathrag_env.sh)
 sbatch --dependency=afterok:${setup_job} test_pipeline.sh
 sbatch run_nuclei_smoke.slurm
 sbatch run_nuclei_extraction.slurm
+sbatch run_wsi_graphs.slurm
 # Or multi-node:
 sbatch run_nuclei_parallel.slurm
 ```
