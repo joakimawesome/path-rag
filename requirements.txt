@@ -1,0 +1,21 @@
+--extra-index-url https://download.pytorch.org/whl/cu124
+
+torch
+torchvision
+transformers
+sentencepiece
+h5py
+matplotlib
+networkx
+numpy
+opencv-python
+openslide-python
+openslide-bin
+pandas
+Pillow
+PyYAML
+scikit-image
+scikit-learn
+scipy
+seaborn
+tqdm

@@ -1,0 +1,5 @@
+# Optional dependencies for HistoCartography-based patch extraction.
+# Not included in default requirements because histocartography pins
+# dgl==0.4.3.post2, which is unavailable on many Windows/Python combos.
+
+histocartography @ git+https://github.com/BiomedSciAI/histocartography.git
