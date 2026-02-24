@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import sys
 import traceback
 from pathlib import Path
 
@@ -12,6 +13,7 @@ try:
 except ImportError as error:
     raise ImportError("openslide-python is required to process .svs files") from error
 
+sys.path.append(os.path.join(os.getcwd(), 'histocartography'))
 from histocartography.preprocessing import NucleiExtractor
 
 TOP_PATCH_COUNT = 6
