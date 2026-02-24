@@ -5,3 +5,5 @@ nohup.out
 arch/*
 histocartography/*
 __pycache__/
+.venv/
+settings.json
