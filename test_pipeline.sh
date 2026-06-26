@@ -17,9 +17,8 @@ TEST_TEMP_DIR="/tmp/nuclei_extract_${SLURM_JOB_ID}"
 
 mkdir -p "$TEST_OUTPUT" "$TEST_TEMP_DIR" logs
 
+module load gcc cuda
 module load python3
-module load cuda/12.4
-module load gcc
 
 source activate path-rag
 

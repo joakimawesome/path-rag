@@ -18,9 +18,8 @@ REPO_DIR="$SCRATCH/path-rag"
 
 mkdir -p "$OUTPUT_DIR" "$RESULT_DIR" logs
 
+module load gcc cuda
 module load python3
-module load cuda/12.4
-module load gcc
 module load pylauncher
 
 source activate path-rag
